@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.TranDao">
+
+    <!--
+
+        查询每一个阶段，以及每一个阶段对应的数量
+        查询得到的结果
+
+        阶段数量：value
+        阶段名称：name
+
+        由于查询得到的结果无法使用domian来封装，所以使用map来保存
+
+        既然是要统计阶段，那么我们就得按照阶段进行分组
+
+    -->
+    <select id="getCharts" resultType="map">
+
+      select
+
+      count(*) as value,
+      stage as name
+
+      from tbl_tran
+
+      group by stage
+
+
+    </select>
+
+    <select id="getTotal" resultType="int">
+
+        select count(*) from tbl_tran
+
+    </select>
+
+    <update id="changeStage">
+
+        update tbl_tran set stage=#{stage},editBy=#{editBy},editTime=#{editTime} where id=#{id}
+
+
+    </update>
+
+    <select id="detail" resultType="Tran">
+
+        select
+
+        tran.id,
+        user.name as owner,
+        tran.money,
+        tran.name,
+        tran.expectedDate,
+        cus.name as customerId,
+        tran.stage,
+        tran.type,
+        tran.source,
+        act.name as activityId,
+        con.fullname as contactsId,
+        tran.createBy,
+        tran.createTime,
+        tran.editBy,
+        tran.editTime,
+        tran.description,
+        tran.contactSummary,
+        tran.nextContactTime
+
+        from tbl_tran tran
+        join tbl_user user
+        on tran.owner=user.id
+        join tbl_customer cus
+        on tran.customerId=cus.id
+        left join tbl_activity act
+        on tran.activityId=act.id
+        left join tbl_contacts con
+        on tran.contactsId=con.id
+
+        where tran.id=#{id}
+
+
+    </select>
+
+    <insert id="save">
+
+        insert into tbl_tran(
+
+            id,
+            owner,
+            money,
+            name,
+            expectedDate,
+            customerId,
+            stage,
+            type,
+            source,
+            activityId,
+            contactsId,
+            createBy,
+            createTime,
+            description,
+            contactSummary,
+            nextContactTime
+
+
+        )
+
+        values(
+
+            #{id},
+            #{owner},
+            #{money},
+            #{name},
+            #{expectedDate},
+            #{customerId},
+            #{stage},
+            #{type},
+            #{source},
+            #{activityId},
+            #{contactsId},
+            #{createBy},
+            #{createTime},
+            #{description},
+            #{contactSummary},
+            #{nextContactTime}
+
+        )
+
+
+    </insert>
+  	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
